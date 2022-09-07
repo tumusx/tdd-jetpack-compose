@@ -1,8 +1,9 @@
 package com.tumusx.namesibgeapi.viewModel
 
-import android.database.Observable
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
 import com.tumusx.namesibgeapi.data.model.NamesDTOItem
+import com.tumusx.namesibgeapi.presenter.viewModel.NamesIBGEViewModel
 import com.tumusx.namesibgeapi.repositoryMock.NamesIBGERepositoryMock
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
@@ -22,7 +23,7 @@ class NamesIBGEViewModelTest {
     val repositoryMockk = mockk<NamesIBGERepositoryMock>()
 
     @MockK
-    private lateinit var itemDTObservable: Observable<List<NamesDTOItem>>
+    private lateinit var itemDTObservable: Observer<List<NamesDTOItem>>
 
     @MockK
     private lateinit var ibgeItemViewModel: NamesIBGEViewModel
@@ -32,8 +33,8 @@ class NamesIBGEViewModelTest {
         ibgeItemViewModel.getAllNames()
         val listItens = mutableListOf<NamesDTOItem>()
         listItens.add(NamesDTOItem(1, "Murillo", 2, 1, "man"))
-        itemDTObservable.unregisterObserver(listItens)
-        ibgeItemViewModel.namesValue.onChanged()
-        verify { ibgeItemViewModel.namesValue.onChanged().valuen(listItens) }
+        ibgeItemViewModel._valuesNames.observeForever(itemDTObservable)
+        ibgeItemViewModel.getAllNames()
+        verify { itemDTObservable.onChanged(listItens) }
     }
 }
